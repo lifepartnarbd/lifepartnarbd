@@ -36,10 +36,13 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {loading ? null : user ? (
               <>
-                <div className="flex items-center gap-2 text-sm text-gray-700">
+                <Link
+                  href="/account"
+                  className="flex items-center gap-2 text-sm text-gray-700 hover:text-emerald-600 transition"
+                >
                   <UserCircle2 className="w-5 h-5 text-emerald-600" />
                   <span className="font-medium">{profile?.custom_id ?? 'ইউজার'}</span>
-                </div>
+                </Link>
                 <Link
                   href="/create-biodata"
                   className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
@@ -88,8 +91,10 @@ export default function Navbar() {
             <div className="border-t border-gray-100 pt-3">
               {user ? (
                 <>
-                  <div className="text-sm text-gray-700 py-2">{profile?.custom_id ?? 'ইউজার'}</div>
-                  <Link href="/create-biodata" className="block bg-emerald-600 text-white text-sm text-center py-2 rounded-lg mb-2">
+                  <Link href="/account" className="block text-sm text-gray-700 py-2">
+                    {profile?.custom_id ?? 'ইউজার'} (অ্যাকাউন্ট)
+                  </Link>
+                  <Link href="/create-biodata" className="block bg-emerald-600 text-white text-sm text-center py-2 rounded-lg mb-2 mt-2">
                     বায়োডাটা জমা দিন
                   </Link>
                   <button onClick={handleLogout} className="block w-full text-left text-red-600 text-sm py-2">
