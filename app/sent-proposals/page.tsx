@@ -2,6 +2,6 @@
 
 import { ProposalList } from '../proposal-list';
 
-export default function ReceivedProposalsPage() {
-  return <ProposalList received />;
+export default function SentProposalsPage() {
+  return <ProposalList />;
 }
