@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
@@ -15,7 +14,6 @@ import {
   LogIn,
   PlusCircle,
   Search,
-  Home,
   ShieldCheck,
 } from 'lucide-react';
 
@@ -105,9 +103,9 @@ export default function AccountPage() {
   }
 
   const statusInfo = {
-    pending: { label: 'পেন্ডিং', sub: 'পর্যালোচনাধীন', color: 'from-amber-500 to-orange-600', icon: Clock },
-    approved: { label: 'অনুমোদিত', sub: 'লাইভ প্রোফাইল', color: 'from-emerald-500 to-emerald-700', icon: BadgeCheck },
-    rejected: { label: 'বাতিল', sub: 'পুনরায় জমা দিন', color: 'from-red-500 to-red-700', icon: XCircle },
+    pending: { label: 'পেন্ডিং', color: 'from-amber-500 to-orange-600', icon: Clock },
+    approved: { label: 'অনুমোদিত', color: 'from-emerald-500 to-emerald-700', icon: BadgeCheck },
+    rejected: { label: 'বাতিল', color: 'from-red-500 to-red-700', icon: XCircle },
   } as const;
 
   const currentStatus = biodata ? statusInfo[biodata.status as keyof typeof statusInfo] : null;
@@ -115,7 +113,7 @@ export default function AccountPage() {
   return (
     <div className="bg-gray-50 min-h-screen pb-16">
 
-      {/* উপরের গ্রাডিয়েন্ট প্রোফাইল হেডার */}
+      {/* প্রোফাইল হেডার */}
       <div className="bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-900 text-white">
         <div className="max-w-5xl mx-auto px-4 py-10 flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center flex-shrink-0">
@@ -129,65 +127,73 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 -mt-6 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 pt-8 space-y-8">
 
-        {/* স্ট্যাটাস কার্ড গ্রিড */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-600 to-purple-700 flex items-center justify-center mb-2">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-            <div className="text-lg font-bold text-gray-900">
-              {biodataLoading ? '...' : biodata ? '১' : '০'}
-            </div>
-            <div className="text-xs text-gray-500">আমার বায়োডাটা</div>
-          </div>
+        {/* স্ট্যাটাস কার্ড গ্রিড - OrdhekDeen স্টাইল: বড়, centered */}
+        <div>
+          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">আমার একাউন্ট পরিসংখ্যান</h2>
+          <div className="grid grid-cols-3 gap-3 md:gap-5">
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentStatus?.color ?? 'from-gray-400 to-gray-500'} flex items-center justify-center mb-2`}>
-              {(() => {
-                const Icon = currentStatus?.icon ?? Clock;
-                return <Icon className="w-5 h-5 text-white" />;
-              })()}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 text-center">
+              <div className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-fuchsia-600 to-purple-700 flex items-center justify-center">
+                <FileText className="w-6 h-6 md:w-7 md:h-7 text-white" />
+              </div>
+              <div className="text-2xl md:text-3xl font-extrabold text-gray-900">
+                {biodataLoading ? '...' : biodata ? '১' : '০'}
+              </div>
+              <div className="text-xs md:text-sm text-gray-500 mt-1">আমার বায়োডাটা</div>
             </div>
-            <div className="text-sm font-bold text-gray-900">
-              {biodataLoading ? '...' : currentStatus?.label ?? 'জমা হয়নি'}
-            </div>
-            <div className="text-xs text-gray-500">{currentStatus?.sub ?? 'বায়োডাটা তৈরি করুন'}</div>
-          </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 col-span-2 md:col-span-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center mb-2">
-              <ShieldCheck className="w-5 h-5 text-white" />
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 text-center">
+              <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-3 rounded-full bg-gradient-to-br ${currentStatus?.color ?? 'from-gray-400 to-gray-500'} flex items-center justify-center`}>
+                {(() => {
+                  const Icon = currentStatus?.icon ?? Clock;
+                  return <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />;
+                })()}
+              </div>
+              <div className="text-lg md:text-xl font-extrabold text-gray-900">
+                {biodataLoading ? '...' : currentStatus?.label ?? 'জমা হয়নি'}
+              </div>
+              <div className="text-xs md:text-sm text-gray-500 mt-1">স্ট্যাটাস</div>
             </div>
-            <div className="text-sm font-bold text-gray-900">সাধারণ ইউজার</div>
-            <div className="text-xs text-gray-500">অ্যাকাউন্ট টাইপ</div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 text-center">
+              <div className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center">
+                <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-white" />
+              </div>
+              <div className="text-lg md:text-xl font-extrabold text-gray-900">সাধারণ</div>
+              <div className="text-xs md:text-sm text-gray-500 mt-1">অ্যাকাউন্ট টাইপ</div>
+            </div>
+
           </div>
         </div>
 
         {/* কুইক অ্যাকশন */}
-        <div className="grid grid-cols-2 gap-4">
-          <Link
-            href="/create-biodata"
-            className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col items-center text-center gap-2 hover:border-emerald-300 transition"
-          >
-            <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center">
-              <PlusCircle className="w-5 h-5 text-emerald-600" />
-            </div>
-            <span className="text-sm font-medium text-gray-800">
-              {biodata ? 'বায়োডাটা এডিট করুন' : 'বায়োডাটা জমা দিন'}
-            </span>
-          </Link>
+        <div>
+          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">দ্রুত কাজ</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Link
+              href="/create-biodata"
+              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center gap-3 hover:border-emerald-300 hover:shadow-md transition"
+            >
+              <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+                <PlusCircle className="w-6 h-6 text-emerald-600" />
+              </div>
+              <span className="text-sm font-semibold text-gray-800">
+                {biodata ? 'বায়োডাটা এডিট করুন' : 'বায়োডাটা জমা দিন'}
+              </span>
+            </Link>
 
-          <Link
-            href="/"
-            className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col items-center text-center gap-2 hover:border-emerald-300 transition"
-          >
-            <div className="w-11 h-11 rounded-full bg-fuchsia-50 flex items-center justify-center">
-              <Search className="w-5 h-5 text-fuchsia-600" />
-            </div>
-            <span className="text-sm font-medium text-gray-800">বায়োডাটা খুঁজুন</span>
-          </Link>
+            <Link
+              href="/"
+              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center gap-3 hover:border-emerald-300 hover:shadow-md transition"
+            >
+              <div className="w-12 h-12 rounded-full bg-fuchsia-50 flex items-center justify-center">
+                <Search className="w-6 h-6 text-fuchsia-600" />
+              </div>
+              <span className="text-sm font-semibold text-gray-800">বায়োডাটা খুঁজুন</span>
+            </Link>
+          </div>
         </div>
 
         {/* বায়োডাটা বিস্তারিত */}
