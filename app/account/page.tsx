@@ -13,6 +13,10 @@ import {
   FileText,
   KeyRound,
   LogIn,
+  PlusCircle,
+  Search,
+  Home,
+  ShieldCheck,
 } from 'lucide-react';
 
 type Biodata = {
@@ -24,8 +28,7 @@ type Biodata = {
 };
 
 export default function AccountPage() {
-  const { user, profile, loading: authLoading, signOut } = useAuth();
-  const router = useRouter();
+  const { user, profile, loading: authLoading } = useAuth();
 
   const [biodata, setBiodata] = useState<Biodata | null>(null);
   const [biodataLoading, setBiodataLoading] = useState(true);
@@ -88,7 +91,7 @@ export default function AccountPage() {
           <LogIn className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900">লগইন করা প্রয়োজন</h2>
           <p className="text-sm text-gray-600 mt-2 mb-6">
-            আপনার অ্যাকাউন্ট দেখতে হলে প্রথমে লগইন করুন।
+            আপনার ড্যাশবোর্ড দেখতে হলে প্রথমে লগইন করুন।
           </p>
           <Link
             href="/login"
@@ -102,112 +105,156 @@ export default function AccountPage() {
   }
 
   const statusInfo = {
-    pending: { label: 'পেন্ডিং (পর্যালোচনাধীন)', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
-    approved: { label: 'অনুমোদিত', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: BadgeCheck },
-    rejected: { label: 'বাতিল হয়েছে', color: 'bg-red-50 text-red-700 border-red-200', icon: XCircle },
+    pending: { label: 'পেন্ডিং', sub: 'পর্যালোচনাধীন', color: 'from-amber-500 to-orange-600', icon: Clock },
+    approved: { label: 'অনুমোদিত', sub: 'লাইভ প্রোফাইল', color: 'from-emerald-500 to-emerald-700', icon: BadgeCheck },
+    rejected: { label: 'বাতিল', sub: 'পুনরায় জমা দিন', color: 'from-red-500 to-red-700', icon: XCircle },
   } as const;
 
-  return (
-    <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+  const currentStatus = biodata ? statusInfo[biodata.status as keyof typeof statusInfo] : null;
 
-      {/* প্রোফাইল কার্ড */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center flex-shrink-0">
-          <UserCircle2 className="w-9 h-9 text-white" />
-        </div>
-        <div>
-          <p className="text-xs font-mono text-emerald-600 font-semibold">{profile?.custom_id}</p>
-          <h1 className="text-xl font-bold text-gray-900">{profile?.full_name || 'নাম নেই'}</h1>
-          <p className="text-sm text-gray-500">{user.email}</p>
+  return (
+    <div className="bg-gray-50 min-h-screen pb-16">
+
+      {/* উপরের গ্রাডিয়েন্ট প্রোফাইল হেডার */}
+      <div className="bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-900 text-white">
+        <div className="max-w-5xl mx-auto px-4 py-10 flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center flex-shrink-0">
+            <UserCircle2 className="w-9 h-9 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-mono text-amber-300 font-semibold">{profile?.custom_id}</p>
+            <h1 className="text-xl md:text-2xl font-bold">{profile?.full_name || 'নাম নেই'}</h1>
+            <p className="text-sm text-teal-100">{user.email}</p>
+          </div>
         </div>
       </div>
 
-      {/* বায়োডাটা স্ট্যাটাস কার্ড */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <FileText className="w-5 h-5 text-emerald-600" />
-          <h2 className="text-lg font-bold text-gray-900">আমার বায়োডাটা</h2>
+      <div className="max-w-5xl mx-auto px-4 -mt-6 space-y-6">
+
+        {/* স্ট্যাটাস কার্ড গ্রিড */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-600 to-purple-700 flex items-center justify-center mb-2">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-lg font-bold text-gray-900">
+              {biodataLoading ? '...' : biodata ? '১' : '০'}
+            </div>
+            <div className="text-xs text-gray-500">আমার বায়োডাটা</div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentStatus?.color ?? 'from-gray-400 to-gray-500'} flex items-center justify-center mb-2`}>
+              {(() => {
+                const Icon = currentStatus?.icon ?? Clock;
+                return <Icon className="w-5 h-5 text-white" />;
+              })()}
+            </div>
+            <div className="text-sm font-bold text-gray-900">
+              {biodataLoading ? '...' : currentStatus?.label ?? 'জমা হয়নি'}
+            </div>
+            <div className="text-xs text-gray-500">{currentStatus?.sub ?? 'বায়োডাটা তৈরি করুন'}</div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 col-span-2 md:col-span-1">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center mb-2">
+              <ShieldCheck className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-sm font-bold text-gray-900">সাধারণ ইউজার</div>
+            <div className="text-xs text-gray-500">অ্যাকাউন্ট টাইপ</div>
+          </div>
         </div>
 
-        {biodataLoading ? (
-          <p className="text-sm text-gray-500">লোড হচ্ছে...</p>
-        ) : !biodata ? (
-          <div className="text-center py-6">
-            <p className="text-sm text-gray-500 mb-4">আপনি এখনো কোনো বায়োডাটা জমা দেননি।</p>
-            <Link
-              href="/create-biodata"
-              className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition"
-            >
-              বায়োডাটা জমা দিন
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div
-              className={`flex items-center gap-2 border rounded-lg px-4 py-3 text-sm font-medium ${
-                statusInfo[biodata.status as keyof typeof statusInfo]?.color ?? 'bg-gray-50 text-gray-700 border-gray-200'
-              }`}
-            >
-              {(() => {
-                const Icon = statusInfo[biodata.status as keyof typeof statusInfo]?.icon ?? Clock;
-                return <Icon className="w-4 h-4" />;
-              })()}
-              {statusInfo[biodata.status as keyof typeof statusInfo]?.label ?? biodata.status}
+        {/* কুইক অ্যাকশন */}
+        <div className="grid grid-cols-2 gap-4">
+          <Link
+            href="/create-biodata"
+            className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col items-center text-center gap-2 hover:border-emerald-300 transition"
+          >
+            <div className="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center">
+              <PlusCircle className="w-5 h-5 text-emerald-600" />
             </div>
+            <span className="text-sm font-medium text-gray-800">
+              {biodata ? 'বায়োডাটা এডিট করুন' : 'বায়োডাটা জমা দিন'}
+            </span>
+          </Link>
 
-            <div className="text-xs text-gray-500">
-              ধরন: {biodata.biodata_type === 'groom' ? 'পাত্রের বায়োডাটা' : 'পাত্রীর বায়োডাটা'} · জমা দেওয়া হয়েছে:{' '}
-              {new Date(biodata.created_at).toLocaleDateString('bn-BD')}
+          <Link
+            href="/"
+            className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col items-center text-center gap-2 hover:border-emerald-300 transition"
+          >
+            <div className="w-11 h-11 rounded-full bg-fuchsia-50 flex items-center justify-center">
+              <Search className="w-5 h-5 text-fuchsia-600" />
             </div>
+            <span className="text-sm font-medium text-gray-800">বায়োডাটা খুঁজুন</span>
+          </Link>
+        </div>
 
+        {/* বায়োডাটা বিস্তারিত */}
+        {biodata && (
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="w-5 h-5 text-emerald-600" />
+              <h2 className="text-lg font-bold text-gray-900">বায়োডাটার বিস্তারিত</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-400 text-xs block">ধরন</span>
+                {biodata.biodata_type === 'groom' ? 'পাত্রের বায়োডাটা' : 'পাত্রীর বায়োডাটা'}
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs block">জমা দেওয়ার তারিখ</span>
+                {new Date(biodata.created_at).toLocaleDateString('bn-BD')}
+              </div>
+            </div>
             {biodata.status === 'rejected' && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-red-600 mt-4 bg-red-50 border border-red-100 rounded-lg p-3">
                 আপনার বায়োডাটা বাতিল হয়েছে। বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করুন।
               </p>
             )}
           </div>
         )}
-      </div>
 
-      {/* পাসওয়ার্ড পরিবর্তন কার্ড */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <KeyRound className="w-5 h-5 text-emerald-600" />
-          <h2 className="text-lg font-bold text-gray-900">পাসওয়ার্ড পরিবর্তন</h2>
+        {/* পাসওয়ার্ড পরিবর্তন */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <KeyRound className="w-5 h-5 text-emerald-600" />
+            <h2 className="text-lg font-bold text-gray-900">পাসওয়ার্ড পরিবর্তন</h2>
+          </div>
+
+          {pwMessage && (
+            <div
+              className={`text-sm rounded-lg p-3 mb-4 ${
+                pwMessage.includes('সফলভাবে')
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}
+            >
+              {pwMessage}
+            </div>
+          )}
+
+          <form onSubmit={handlePasswordChange} className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="password"
+              placeholder="নতুন পাসওয়ার্ড"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={6}
+              className="flex-1 border rounded-lg p-2.5 text-sm bg-gray-50"
+            />
+            <button
+              type="submit"
+              disabled={pwLoading}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition whitespace-nowrap"
+            >
+              {pwLoading ? 'আপডেট হচ্ছে...' : 'পরিবর্তন করুন'}
+            </button>
+          </form>
         </div>
 
-        {pwMessage && (
-          <div
-            className={`text-sm rounded-lg p-3 mb-4 ${
-              pwMessage.includes('সফলভাবে')
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
-            }`}
-          >
-            {pwMessage}
-          </div>
-        )}
-
-        <form onSubmit={handlePasswordChange} className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="password"
-            placeholder="নতুন পাসওয়ার্ড"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            minLength={6}
-            className="flex-1 border rounded-lg p-2.5 text-sm bg-gray-50"
-          />
-          <button
-            type="submit"
-            disabled={pwLoading}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition whitespace-nowrap"
-          >
-            {pwLoading ? 'আপডেট হচ্ছে...' : 'পরিবর্তন করুন'}
-          </button>
-        </form>
       </div>
-
     </div>
   );
 }
