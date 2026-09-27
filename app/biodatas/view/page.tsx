@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   UserRoundCheck,
 } from 'lucide-react';
+import ShortlistButton from '@/components/ShortlistButton';
 
 type Biodata = {
   id: number;
@@ -113,10 +114,13 @@ function BiodataViewInner() {
     <div className="bg-gray-50 min-h-screen pb-12">
       <div className="max-w-3xl mx-auto px-4 py-8">
 
-        <Link href="/biodatas" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-600 mb-4 transition">
-          <ArrowLeft className="w-4 h-4" />
-          লিস্টে ফিরে যান
-        </Link>
+        <div className="flex items-center justify-between mb-4">
+          <Link href="/biodatas" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-600 transition">
+            <ArrowLeft className="w-4 h-4" />
+            লিস্টে ফিরে যান
+          </Link>
+          <ShortlistButton biodataId={biodata.id} />
+        </div>
 
         {/* হেডার কার্ড */}
         <div className={`rounded-2xl p-6 mb-5 text-white ${
