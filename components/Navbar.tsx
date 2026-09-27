@@ -28,7 +28,7 @@ export default function Navbar() {
 
           <div className="hidden md:flex space-x-8 items-center">
             <Link href="/" className="text-gray-700 hover:text-emerald-600 font-medium">হোম</Link>
-            <Link href="#" className="text-gray-700 hover:text-emerald-600 font-medium">বায়োডাটা খুঁজুন</Link>
+            <Link href="/biodatas" className="text-gray-700 hover:text-emerald-600 font-medium">বায়োডাটা খুঁজুন</Link>
             <Link href="#" className="text-gray-700 hover:text-emerald-600 font-medium">নির্দেশনা</Link>
             <Link href="#" className="text-gray-700 hover:text-emerald-600 font-medium">যোগাযোগ</Link>
           </div>
@@ -85,7 +85,7 @@ export default function Navbar() {
         {menuOpen && (
           <div className="md:hidden pb-4 space-y-2">
             <Link href="/" className="block text-gray-700 py-2">হোম</Link>
-            <Link href="#" className="block text-gray-700 py-2">বায়োডাটা খুঁজুন</Link>
+            <Link href="/biodatas" className="block text-gray-700 py-2">বায়োডাটা খুঁজুন</Link>
             <Link href="#" className="block text-gray-700 py-2">নির্দেশনা</Link>
             <Link href="#" className="block text-gray-700 py-2">যোগাযোগ</Link>
             <div className="border-t border-gray-100 pt-3">
