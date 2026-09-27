@@ -1,7 +1,6 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
+import SiteChrome from '@/components/SiteChrome';
 
 export const metadata = {
   title: 'Life Partner BD',
@@ -17,11 +16,7 @@ export default function RootLayout({
     <html lang="bn">
       <body className="bg-gray-50 text-gray-900 antialiased font-sans flex flex-col min-h-screen">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </AuthProvider>
       </body>
     </html>
