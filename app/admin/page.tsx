@@ -8,7 +8,6 @@ import {
   Clock,
   CheckCircle2,
 } from 'lucide-react';
-
 import { useAdminLanguage } from '@/contexts/AdminLanguageContext';
 
 export default function AdminDashboardPage() {
@@ -33,32 +32,20 @@ export default function AdminDashboardPage() {
       ] = await Promise.all([
         supabase
           .from('profiles')
-          .select('*', {
-            count: 'exact',
-            head: true,
-          }),
+          .select('*', { count: 'exact', head: true }),
 
         supabase
           .from('biodatas')
-          .select('*', {
-            count: 'exact',
-            head: true,
-          }),
+          .select('*', { count: 'exact', head: true }),
 
         supabase
           .from('biodatas')
-          .select('*', {
-            count: 'exact',
-            head: true,
-          })
+          .select('*', { count: 'exact', head: true })
           .eq('status', 'pending'),
 
         supabase
           .from('biodatas')
-          .select('*', {
-            count: 'exact',
-            head: true,
-          })
+          .select('*', { count: 'exact', head: true })
           .eq('status', 'approved'),
       ]);
 
@@ -77,37 +64,27 @@ export default function AdminDashboardPage() {
 
   const cards = [
     {
-      label:
-        language === 'bn'
-          ? 'মোট ইউজার'
-          : 'Total Users',
+      label: language === 'bn' ? 'মোট ইউজার' : 'Total Users',
       value: stats.users,
       icon: Users,
       color: 'from-blue-500 to-blue-700',
     },
     {
-      label:
-        language === 'bn'
-          ? 'মোট বায়োডাটা'
-          : 'Total Biodatas',
+      label: language === 'bn' ? 'মোট বায়োডাটা' : 'Total Biodata',
       value: stats.total,
       icon: FileText,
       color: 'from-fuchsia-600 to-purple-700',
     },
     {
-      label:
-        language === 'bn'
-          ? 'পেন্ডিং রিকোয়েস্ট'
-          : 'Pending Requests',
+      label: language === 'bn'
+        ? 'পেন্ডিং রিকোয়েস্ট'
+        : 'Pending Requests',
       value: stats.pending,
       icon: Clock,
       color: 'from-amber-500 to-orange-600',
     },
     {
-      label:
-        language === 'bn'
-          ? 'অনুমোদিত'
-          : 'Approved',
+      label: language === 'bn' ? 'অনুমোদিত' : 'Approved',
       value: stats.approved,
       icon: CheckCircle2,
       color: 'from-emerald-500 to-emerald-700',
@@ -118,15 +95,13 @@ export default function AdminDashboardPage() {
     <div className="p-6 md:p-8">
 
       <h1 className="text-2xl font-bold text-white mb-1">
-        {language === 'bn'
-          ? 'ড্যাশবোর্ড'
-          : 'Dashboard'}
+        {language === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}
       </h1>
 
       <p className="text-sm text-slate-400 mb-6">
         {language === 'bn'
           ? 'সাইটের সার্বিক পরিসংখ্যান'
-          : 'Overview of site statistics'}
+          : 'Overall site statistics'}
       </p>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -139,7 +114,6 @@ export default function AdminDashboardPage() {
               key={card.label}
               className="bg-slate-900 border border-slate-800 rounded-2xl p-5"
             >
-
               <div
                 className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-3`}
               >
@@ -153,13 +127,11 @@ export default function AdminDashboardPage() {
               <div className="text-xs text-slate-400 mt-1">
                 {card.label}
               </div>
-
             </div>
           );
         })}
 
       </div>
-
     </div>
   );
 }
