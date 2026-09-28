@@ -7,8 +7,11 @@ import {
   XCircle,
   Coins,
 } from 'lucide-react';
+import { useAdminLanguage } from '@/contexts/AdminLanguageContext';
 
 export default function AdminConnectionsPage() {
+  const { language } = useAdminLanguage();
+
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
@@ -67,20 +70,26 @@ export default function AdminConnectionsPage() {
     <div className="p-6 md:p-8">
 
       <h1 className="text-2xl font-bold text-white mb-1">
-        কানেকশন পেমেন্ট
+        {language === 'bn'
+          ? 'কানেকশন পেমেন্ট'
+          : 'Connection Payments'}
       </h1>
 
       <p className="text-sm text-slate-400 mb-6">
-        ৳১০০ পেমেন্ট যাচাই করে কানেকশন অনুমোদন করুন।
+        {language === 'bn'
+          ? 'পেমেন্ট যাচাই করে কানেকশন অনুমোদন করুন।'
+          : 'Review payments and approve connections.'}
       </p>
 
       {loading ? (
         <p className="text-slate-500">
-          লোড হচ্ছে...
+          {language === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}
         </p>
       ) : rows.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-500">
-          কোনো পেমেন্ট রিকোয়েস্ট নেই।
+          {language === 'bn'
+            ? 'কোনো পেমেন্ট রিকোয়েস্ট নেই।'
+            : 'No payment requests found.'}
         </div>
       ) : (
         <div className="space-y-3">
@@ -94,8 +103,14 @@ export default function AdminConnectionsPage() {
               <div>
 
                 <p className="text-white font-semibold flex items-center gap-2">
+
                   <Coins className="w-4 h-4 text-amber-400" />
-                  ৳{r.amount} · {r.connections_granted} কানেকশন
+
+                  ৳{r.amount} · {r.connections_granted}{' '}
+
+                  {language === 'bn'
+                    ? 'কানেকশন'
+                    : 'Connection'}
                 </p>
 
                 <p className="text-xs text-slate-500 mt-1">
@@ -105,7 +120,11 @@ export default function AdminConnectionsPage() {
                 <p className="text-xs text-slate-600 mt-1">
                   {new Date(
                     r.created_at
-                  ).toLocaleString('bn-BD')}
+                  ).toLocaleString(
+                    language === 'bn'
+                      ? 'bn-BD'
+                      : 'en-US'
+                  )}
                 </p>
 
               </div>
@@ -121,7 +140,10 @@ export default function AdminConnectionsPage() {
                     className="bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs flex gap-1 items-center"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    অনুমোদন
+
+                    {language === 'bn'
+                      ? 'অনুমোদন'
+                      : 'Approve'}
                   </button>
 
                   <button
@@ -132,7 +154,10 @@ export default function AdminConnectionsPage() {
                     className="bg-red-500/10 text-red-400 px-3 py-2 rounded-lg text-xs flex gap-1 items-center"
                   >
                     <XCircle className="w-4 h-4" />
-                    বাতিল
+
+                    {language === 'bn'
+                      ? 'বাতিল'
+                      : 'Reject'}
                   </button>
 
                 </div>
