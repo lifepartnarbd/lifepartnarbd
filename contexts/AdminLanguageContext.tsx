@@ -1,6 +1,6 @@
 'use client';
 
-import {
+import React, {
   createContext,
   useContext,
   useEffect,
@@ -12,12 +12,11 @@ type AdminLanguage = 'bn' | 'en';
 type AdminLanguageContextType = {
   language: AdminLanguage;
   setLanguage: (language: AdminLanguage) => void;
+  toggleLanguage: () => void;
 };
 
 const AdminLanguageContext =
-  createContext<AdminLanguageContextType | undefined>(
-    undefined
-  );
+  createContext<AdminLanguageContextType | undefined>(undefined);
 
 export function AdminLanguageProvider({
   children,
@@ -25,28 +24,28 @@ export function AdminLanguageProvider({
   children: React.ReactNode;
 }) {
   const [language, setLanguageState] =
-    useState<AdminLanguage>('bn');
+    useState<AdminLanguage>('en');
 
   useEffect(() => {
-    const saved =
-      localStorage.getItem('admin-language');
+    const saved = localStorage.getItem(
+      'admin-language'
+    ) as AdminLanguage | null;
 
     if (saved === 'bn' || saved === 'en') {
       setLanguageState(saved);
     }
   }, []);
 
-  const setLanguage = (
-    newLanguage: AdminLanguage
-  ) => {
-    setLanguageState(newLanguage);
+  const setLanguage = (value: AdminLanguage) => {
+    setLanguageState(value);
+    localStorage.setItem('admin-language', value);
+  };
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        'admin-language',
-        newLanguage
-      );
-    }
+  const toggleLanguage = () => {
+    const nextLanguage =
+      language === 'bn' ? 'en' : 'bn';
+
+    setLanguage(nextLanguage);
   };
 
   return (
@@ -54,6 +53,7 @@ export function AdminLanguageProvider({
       value={{
         language,
         setLanguage,
+        toggleLanguage,
       }}
     >
       {children}
@@ -68,7 +68,7 @@ export function useAdminLanguage() {
 
   if (!context) {
     throw new Error(
-      'useAdminLanguage must be used inside AdminLanguageProvider'
+      'useAdminLanguage অবশ্যই AdminLanguageProvider এর ভিতরে ব্যবহার করতে হবে'
     );
   }
 
