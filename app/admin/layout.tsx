@@ -2,10 +2,12 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAdminLanguage } from '@/contexts/AdminLanguageContext';
+import {
+  AdminLanguageProvider,
+  useAdminLanguage,
+} from '@/contexts/AdminLanguageContext';
 import { useEffect } from 'react';
 import Link from 'next/link';
-
 import {
   LayoutDashboard,
   Users,
@@ -15,25 +17,19 @@ import {
   Flag,
   Coins,
   Settings,
-  Languages,
 } from 'lucide-react';
 
-export default function AdminLayout({
+function AdminLayoutContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
-
   const isLoginPage = pathname === '/admin/login';
 
   const { user, profile, loading, signOut } = useAuth();
-
-  const {
-    language,
-    setLanguage,
-  } = useAdminLanguage();
+  const { language, toggleLanguage } = useAdminLanguage();
+  const router = useRouter();
 
   useEffect(() => {
     if (isLoginPage) return;
@@ -60,9 +56,7 @@ export default function AdminLayout({
   ) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        {language === 'bn'
-          ? 'লোড হচ্ছে...'
-          : 'Loading...'}
+        {language === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}
       </div>
     );
   }
@@ -70,10 +64,6 @@ export default function AdminLayout({
   const handleLogout = async () => {
     await signOut();
     router.push('/admin/login');
-  };
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'bn' ? 'en' : 'bn');
   };
 
   const navItems = [
@@ -92,10 +82,7 @@ export default function AdminLayout({
     },
     {
       href: '/admin/users',
-      label:
-        language === 'bn'
-          ? 'ইউজার তালিকা'
-          : 'Users',
+      label: language === 'bn' ? 'ইউজার তালিকা' : 'Users',
       icon: Users,
     },
     {
@@ -116,10 +103,7 @@ export default function AdminLayout({
     },
     {
       href: '/admin/settings',
-      label:
-        language === 'bn'
-          ? 'সেটিংস'
-          : 'Settings',
+      label: language === 'bn' ? 'সেটিংস' : 'Settings',
       icon: Settings,
     },
   ];
@@ -127,38 +111,22 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-slate-950 flex">
 
-      {/* Sidebar */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col fixed h-full">
 
-        {/* Logo */}
         <div className="p-5 border-b border-slate-800 flex items-center gap-2">
-
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-fuchsia-600 to-purple-700 flex items-center justify-center">
             <ShieldCheck className="w-5 h-5 text-white" />
           </div>
 
-          <div>
-            <span className="text-white font-bold text-sm block">
-              Life Partner BD
-            </span>
-
-            <span className="text-[10px] text-slate-500">
-              Admin Panel
-            </span>
-          </div>
-
+          <span className="text-white font-bold text-sm">
+            Life Partner BD
+          </span>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1">
-
           {navItems.map((item) => {
             const Icon = item.icon;
-
-            const active =
-              item.href === '/admin'
-                ? pathname === '/admin'
-                : pathname.startsWith(item.href);
+            const active = pathname === item.href;
 
             return (
               <Link
@@ -175,52 +143,47 @@ export default function AdminLayout({
               </Link>
             );
           })}
-
         </nav>
 
-        {/* Bottom */}
-        <div className="p-3 border-t border-slate-800 space-y-1">
+        <div className="p-3 border-t border-slate-800 space-y-2">
 
-          {/* Language */}
           <button
-            type="button"
             onClick={toggleLanguage}
-            className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition"
+            className="flex items-center justify-center w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition"
           >
-            <Languages className="w-4 h-4" />
-
-            <span className="flex-1 text-left">
-              {language === 'bn'
-                ? 'English'
-                : 'বাংলা'}
-            </span>
-
-            <span className="text-[10px] text-slate-500">
-              {language === 'bn' ? 'EN' : 'BN'}
-            </span>
+            {language === 'bn' ? 'English' : 'বাংলা'}
           </button>
 
-          {/* Logout */}
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-red-400 transition"
           >
             <LogOut className="w-4 h-4" />
-
-            {language === 'bn'
-              ? 'লগআউট'
-              : 'Logout'}
+            {language === 'bn' ? 'লগআউট' : 'Logout'}
           </button>
 
         </div>
 
       </aside>
 
-      {/* Main */}
       <main className="flex-1 ml-64 overflow-y-auto">
         {children}
       </main>
 
     </div>
+  );
+}
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <AdminLanguageProvider>
+      <AdminLayoutContent>
+        {children}
+      </AdminLayoutContent>
+    </AdminLanguageProvider>
   );
 }
