@@ -3,33 +3,31 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import {
-  ShieldCheck,
-  Lock,
-  Languages,
-} from 'lucide-react';
-
-import { useAdminLanguage } from '@/contexts/AdminLanguageContext';
+import { ShieldCheck, Lock, Languages } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
 
-  const {
-    language,
-    toggleLanguage,
-  } = useAdminLanguage();
+  const [language, setLanguage] = useState<'bn' | 'en'>(() => {
+    if (typeof window === 'undefined') return 'bn';
 
-  const [loading, setLoading] =
-    useState(false);
+    const saved = localStorage.getItem('admin-language');
 
-  const [error, setError] =
-    useState('');
+    return saved === 'en' ? 'en' : 'bn';
+  });
 
-  const [formData, setFormData] =
-    useState({
-      email: '',
-      password: '',
-    });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const changeLanguage = (value: 'bn' | 'en') => {
+    setLanguage(value);
+    localStorage.setItem('admin-language', value);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -48,10 +46,7 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
-    const {
-      data,
-      error: signInError,
-    } =
+    const { data, error: signInError } =
       await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
@@ -97,22 +92,28 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 relative">
-
-      {/* Language */}
-      <button
-        onClick={toggleLanguage}
-        type="button"
-        className="absolute top-5 right-5 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs"
-      >
-        <Languages className="w-4 h-4" />
-
-        {language === 'bn'
-          ? 'English'
-          : 'বাংলা'}
-      </button>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
 
       <div className="max-w-sm w-full">
+
+        <div className="flex justify-end mb-4">
+
+          <button
+            onClick={() =>
+              changeLanguage(
+                language === 'bn' ? 'en' : 'bn'
+              )
+            }
+            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white"
+          >
+            <Languages className="w-4 h-4" />
+
+            {language === 'bn'
+              ? 'English'
+              : 'বাংলা'}
+          </button>
+
+        </div>
 
         <div className="text-center mb-8">
 
@@ -160,11 +161,6 @@ export default function AdminLoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
-                placeholder={
-                  language === 'bn'
-                    ? 'অ্যাডমিন ইমেইল'
-                    : 'Admin email'
-                }
               />
 
             </div>
@@ -184,11 +180,6 @@ export default function AdminLoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
-                placeholder={
-                  language === 'bn'
-                    ? 'পাসওয়ার্ড'
-                    : 'Password'
-                }
               />
 
             </div>
@@ -196,7 +187,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-fuchsia-600 to-purple-700 hover:opacity-90 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-fuchsia-600 to-purple-700 hover:opacity-90 text-white font-medium py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2"
             >
 
               <Lock className="w-4 h-4" />
@@ -204,7 +195,7 @@ export default function AdminLoginPage() {
               {loading
                 ? language === 'bn'
                   ? 'যাচাই করা হচ্ছে...'
-                  : 'Checking...'
+                  : 'Verifying...'
                 : language === 'bn'
                   ? 'অ্যাডমিন লগইন'
                   : 'Admin Login'}
