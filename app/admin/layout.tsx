@@ -5,7 +5,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AdminLanguageProvider, useAdminLanguage } from '@/contexts/AdminLanguageContext';
 import { useEffect } from 'react';
 import Link from 'next/link';
-
 import {
   LayoutDashboard,
   Users,
@@ -27,12 +26,8 @@ function AdminLayoutContent({
   const isLoginPage = pathname === '/admin/login';
 
   const { user, profile, loading, signOut } = useAuth();
+  const { language, setLanguage } = useAdminLanguage();
   const router = useRouter();
-
-  const {
-    language,
-    toggleLanguage,
-  } = useAdminLanguage();
 
   useEffect(() => {
     if (isLoginPage) return;
@@ -40,28 +35,16 @@ function AdminLayoutContent({
     if (!loading && (!user || profile?.role !== 'admin')) {
       router.push('/admin/login');
     }
-  }, [
-    isLoginPage,
-    loading,
-    user,
-    profile,
-    router,
-  ]);
+  }, [isLoginPage, loading, user, profile, router]);
 
   if (isLoginPage) {
     return <>{children}</>;
   }
 
-  if (
-    loading ||
-    !user ||
-    profile?.role !== 'admin'
-  ) {
+  if (loading || !user || profile?.role !== 'admin') {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        {language === 'bn'
-          ? 'লোড হচ্ছে...'
-          : 'Loading...'}
+        {language === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}
       </div>
     );
   }
@@ -74,50 +57,32 @@ function AdminLayoutContent({
   const navItems = [
     {
       href: '/admin',
-      label:
-        language === 'bn'
-          ? 'ড্যাশবোর্ড'
-          : 'Dashboard',
+      label: language === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard',
       icon: LayoutDashboard,
     },
     {
       href: '/admin/biodata',
-      label:
-        language === 'bn'
-          ? 'বায়োডাটা রিকোয়েস্ট'
-          : 'Biodata Requests',
+      label: language === 'bn' ? 'বায়োডাটা রিকোয়েস্ট' : 'Biodata Requests',
       icon: FileClock,
     },
     {
       href: '/admin/users',
-      label:
-        language === 'bn'
-          ? 'ইউজার তালিকা'
-          : 'Users',
+      label: language === 'bn' ? 'ইউজার তালিকা' : 'Users',
       icon: Users,
     },
     {
       href: '/admin/support',
-      label:
-        language === 'bn'
-          ? 'সাপোর্ট / রিপোর্ট'
-          : 'Support / Reports',
+      label: language === 'bn' ? 'সাপোর্ট / রিপোর্ট' : 'Support / Reports',
       icon: Flag,
     },
     {
       href: '/admin/connections',
-      label:
-        language === 'bn'
-          ? 'কানেকশন পেমেন্ট'
-          : 'Connection Payments',
+      label: language === 'bn' ? 'কানেকশন পেমেন্ট' : 'Connection Payments',
       icon: Coins,
     },
     {
       href: '/admin/settings',
-      label:
-        language === 'bn'
-          ? 'সেটিংস'
-          : 'Settings',
+      label: language === 'bn' ? 'সেটিংস' : 'Settings',
       icon: Settings,
     },
   ];
@@ -125,12 +90,9 @@ function AdminLayoutContent({
   return (
     <div className="min-h-screen bg-slate-950 flex">
 
-      {/* Sidebar */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col fixed h-full">
 
-        {/* Logo */}
         <div className="p-5 border-b border-slate-800 flex items-center gap-2">
-
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-fuchsia-600 to-purple-700 flex items-center justify-center">
             <ShieldCheck className="w-5 h-5 text-white" />
           </div>
@@ -141,24 +103,16 @@ function AdminLayoutContent({
             </span>
 
             <span className="text-[10px] text-slate-500">
-              ADMIN PANEL
+              {language === 'bn' ? 'অ্যাডমিন প্যানেল' : 'Admin Panel'}
             </span>
           </div>
-
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1">
 
           {navItems.map((item) => {
             const Icon = item.icon;
-
-            const active =
-              pathname === item.href ||
-              (
-                item.href !== '/admin' &&
-                pathname.startsWith(`${item.href}/`)
-              );
+            const active = pathname === item.href;
 
             return (
               <Link
@@ -178,46 +132,35 @@ function AdminLayoutContent({
 
         </nav>
 
-        {/* Bottom controls */}
-        <div className="p-3 border-t border-slate-800 space-y-1">
+        <div className="p-3 border-t border-slate-800 space-y-2">
 
-          {/* Language */}
-          <button
-            onClick={toggleLanguage}
-            className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition"
-          >
-            <Languages className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+            <Languages className="w-4 h-4 text-slate-500" />
 
-            <span className="flex-1 text-left">
+            <button
+              onClick={() =>
+                setLanguage(language === 'bn' ? 'en' : 'bn')
+              }
+              className="flex-1 text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:bg-slate-800 hover:text-white transition"
+            >
               {language === 'bn'
                 ? 'English'
                 : 'বাংলা'}
-            </span>
+            </button>
+          </div>
 
-            <span className="text-[10px] bg-slate-800 px-2 py-1 rounded">
-              {language === 'bn'
-                ? 'BN'
-                : 'EN'}
-            </span>
-          </button>
-
-          {/* Logout */}
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-red-400 transition"
           >
             <LogOut className="w-4 h-4" />
-
-            {language === 'bn'
-              ? 'লগআউট'
-              : 'Logout'}
+            {language === 'bn' ? 'লগআউট' : 'Logout'}
           </button>
 
         </div>
 
       </aside>
 
-      {/* Main */}
       <main className="flex-1 ml-64 overflow-y-auto">
         {children}
       </main>
